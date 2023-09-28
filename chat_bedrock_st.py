@@ -1,18 +1,22 @@
+import time
+
+import boto3
 import streamlit as st
 from langchain.chains import ConversationChain
-from langchain.memory import ConversationBufferMemory
 from langchain.llms.bedrock import Bedrock
-import time
+from langchain.memory import ConversationBufferMemory
 
 st.title("ChatBedrock")
 
-def prompt_fixer(prompt: str) -> str:
-    # Add headers to start and end of prompt
-    return "\n\nHuman: " + prompt + "\n\nAssistant:"
+# Setup bedrock
+bedrock_runtime = boto3.client(
+    service_name="bedrock-runtime",
+    region_name="us-east-1",
+)
 
 @st.cache_resource
 def load_llm():
-    llm = Bedrock(model_id="anthropic.claude-v2")
+    llm = Bedrock(client=bedrock_runtime, model_id="anthropic.claude-v2")
     llm.model_kwargs = {"temperature": 0.7, "max_tokens_to_sample": 2048}
 
     model = ConversationChain(llm=llm, verbose=True, memory=ConversationBufferMemory())
@@ -38,7 +42,7 @@ if prompt := st.chat_input("What is up?"):
         message_placeholder = st.empty()
         full_response = ""
 
-        prompt = prompt_fixer(prompt)
+        # prompt = prompt_fixer(prompt)
         result = model.predict(input=prompt)
 
         # Simulate stream of response with milliseconds delay

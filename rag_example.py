@@ -1,7 +1,8 @@
+import json
+
+import boto3
 from langchain.embeddings import BedrockEmbeddings
 from langchain.vectorstores import FAISS
-import boto3
-import json
 
 # Setup bedrock
 bedrock_runtime = boto3.client(
@@ -22,9 +23,15 @@ sentences = [
     "What is your favourite color?",
 ]
 
-def call_bedrock(prompt):
+
+def claude_prompt_format(prompt: str) -> str:
+    # Add headers to start and end of prompt
+    return "\n\nHuman: " + prompt + "\n\nAssistant:"
+
+# Call Claude model
+def call_claude(prompt):
     prompt_config = {
-        "prompt": prompt,
+        "prompt": claude_prompt_format(prompt),
         "max_tokens_to_sample": 4096,
         "temperature": 0.5,
         "top_k": 250,
@@ -43,12 +50,12 @@ def call_bedrock(prompt):
     )
     response_body = json.loads(response.get("body").read())
 
-    results = response_body.get("results")[0].get("outputText")
+    results = response_body.get("completion")
     return results
-
 
 def rag_setup(query):
     embeddings = BedrockEmbeddings(
+        client=bedrock_runtime,
         model_id="amazon.titan-embed-text-v1",
     )
     local_vector_store = FAISS.from_texts(sentences, embeddings)
@@ -66,7 +73,7 @@ def rag_setup(query):
     Question: {query}
     Answer:"""
 
-    return call_bedrock(prompt)
+    return call_claude(prompt)
 
 
 query = "What type of pet do I have?"

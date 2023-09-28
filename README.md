@@ -69,8 +69,6 @@ python rag_example.py
 
 This will demonstrate how RAG augments foundation models by retrieving and incorporating external data into the generated content.
 
-**Note:** As of 9/28, this example only works with [Python 3.9](https://github.com/langchain-ai/langchain/issues/9117) due to LangChain compatibility issues.
-
 ## Security
 
 See [CONTRIBUTING](CONTRIBUTING.md#security-issue-notifications) for more information.
