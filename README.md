@@ -16,7 +16,7 @@ To get a local copy up and running, follow these simple steps.
 Clone the repo
 
 ```bash
-git clone https://github.com/your_username/Your-Repo-Name.git
+git clone https://github.com/build-on-aws/amazon-bedrock-quick-start.git
 ```
 
 Install required packages
@@ -69,7 +69,7 @@ python rag_example.py
 
 This will demonstrate how RAG augments foundation models by retrieving and incorporating external data into the generated content.
 
-**Note:** As of 9/28, this example only works with [Python 3.9[(https://github.com/langchain-ai/langchain/issues/9117)] due to LangChain compatibility issues.
+**Note:** As of 9/28, this example only works with [Python 3.9](https://github.com/langchain-ai/langchain/issues/9117) due to LangChain compatibility issues.
 
 ## Security
 
