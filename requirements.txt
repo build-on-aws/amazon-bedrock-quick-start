@@ -1,5 +1,6 @@
 boto3
-langchain 
+langchain
+langchain-community 
 streamlit 
 pillow 
 faiss-cpu
