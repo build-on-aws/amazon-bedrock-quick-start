@@ -166,20 +166,24 @@ if model == "Stable Diffusion":
     style = st.selectbox("Select style", sd_presets)
     prompt = st.text_input("Enter prompt")
 
-    results = generate_image_sd(prompt, style)
+    if st.button("Generate"):
 
-    # use claude to describe image
-    desc_image = call_claude_sonet(results)
+        results = generate_image_sd(prompt, style)
 
-    img = convert_base64_to_image(results)
-    st.image(img, caption=desc_image)
+        # use claude to describe image
+        desc_image = call_claude_sonet(results)
+
+        img = convert_base64_to_image(results)
+        st.image(img, caption=desc_image)
 
 
 elif model == "Amazon Titan":
     prompt = st.text_input("Enter prompt")
-    results = generate_image_titan(prompt)
-    # use claude to describe image
-    desc_image = call_claude_sonet(results)
 
-    img = convert_base64_to_image(results)
-    st.image(img, caption=desc_image)
+    if st.button("Generate"):
+        results = generate_image_titan(prompt)
+        # use claude to describe image
+        desc_image = call_claude_sonet(results)
+
+        img = convert_base64_to_image(results)
+        st.image(img, caption=desc_image)
