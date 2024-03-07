@@ -40,9 +40,9 @@ def get_chat_history():
     res = ''
     for msg in st.session_state['history']:
         if 'input' in msg:
-            res += f"user: {msg['input']}"
+            res += f"user: {msg['input']}\n"
         if 'output' in msg:
-            res += f"ai: {msg['output']}"
+            res += f"ai: {msg['output']}\n"
 
     return res
 
