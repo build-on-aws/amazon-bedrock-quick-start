@@ -14,6 +14,7 @@ bedrock_runtime = boto3.client(
     region_name="us-east-1",
 )
 
+
 @st.cache_resource
 def load_llm():
     llm = Bedrock(client=bedrock_runtime, model_id="anthropic.claude-v2")

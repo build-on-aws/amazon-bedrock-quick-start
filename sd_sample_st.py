@@ -1,13 +1,12 @@
-import streamlit as st
-import boto3
-import json
-from PIL import Image
 import io
+import json
 
+import boto3
+import streamlit as st
+from PIL import Image
 
 st.title("Building with Bedrock")  # Title of the application
 st.subheader("Stable Diffusion Demo")
-
 
 # List of Stable Diffusion Preset Styles
 sd_presets = [
@@ -36,6 +35,7 @@ bedrock_runtime = boto3.client(
     service_name="bedrock-runtime",
     region_name="us-east-1",
 )
+
 
 # Bedrock api call to stable diffusion
 def generate_image(text, style):
@@ -95,7 +95,6 @@ def base64_to_pil(base64_string):
 style = st.selectbox("Select Style", sd_presets)
 # text input
 prompt = st.text_input("Enter prompt")
-
 
 #  Generate image from prompt,
 if st.button("Generate Image"):

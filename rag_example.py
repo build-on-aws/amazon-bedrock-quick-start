@@ -28,6 +28,7 @@ def claude_prompt_format(prompt: str) -> str:
     # Add headers to start and end of prompt
     return "\n\nHuman: " + prompt + "\n\nAssistant:"
 
+
 # Call Claude model
 def call_claude(prompt):
     prompt_config = {
@@ -52,6 +53,7 @@ def call_claude(prompt):
 
     results = response_body.get("completion")
     return results
+
 
 def rag_setup(query):
     embeddings = BedrockEmbeddings(
