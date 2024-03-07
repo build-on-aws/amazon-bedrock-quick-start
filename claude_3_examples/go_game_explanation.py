@@ -106,12 +106,11 @@ def main():
         response = run_multi_modal_prompt(
             bedrock_runtime, model_id, messages, max_tokens)
         st.write(response.get("content")[0].get("text"))
-        print(json.dumps(response, indent=4))
+        logger.info(json.dumps(response, indent=4))
 
     except ClientError as err:
         message = err.response["Error"]["Message"]
         logger.error("A client error occurred: %s", message)
-        print("A client error occurred: " + format(message))
 
 
 if __name__ == "__main__":
