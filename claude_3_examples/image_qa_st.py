@@ -39,7 +39,8 @@ def show_chat_history():
 
 
 def clear_chat_history_message():
-    del st.session_state['history']
+    if 'history' in st.session_state:
+        del st.session_state['history']
 
 
 def run_multi_modal_prompt(bedrock_runtime, model_id, messages, max_tokens):
