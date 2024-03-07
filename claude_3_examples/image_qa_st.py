@@ -11,10 +11,6 @@ logging.basicConfig(level=logging.INFO)
 
 st.sidebar.title("Building with Bedrock")  # Title of the application
 st.sidebar.subheader("Q&A for the uploaded image")
-system_input = """
-You are Claude, an AI assistant created by Anthropic to be helpful,harmless, and honest. 
-Your goal is to provide informative and substantive responses to queries while avoiding potential harms.
-You should answer the questions in the same language with user input text."""
 
 REGION = "us-west-2"
 
@@ -38,6 +34,19 @@ def show_chat_history():
             st.chat_message(name='ai').write(msg['output'])
 
 
+def get_chat_history():
+    if 'history' not in st.session_state:
+        return ''
+    res = ''
+    for msg in st.session_state['history']:
+        if 'input' in msg:
+            res += f"user: {msg['input']}"
+        if 'output' in msg:
+            res += f"ai: {msg['output']}"
+
+    return res
+
+
 def clear_chat_history_message():
     if 'history' in st.session_state:
         del st.session_state['history']
@@ -54,6 +63,15 @@ def run_multi_modal_prompt(bedrock_runtime, model_id, messages, max_tokens):
     Returns:
         None.
     """
+
+    system_input = """
+    You are Claude, an AI assistant created by Anthropic to be helpful,harmless, and honest. 
+    Your goal is to provide informative and substantive responses to queries while avoiding potential harms.
+    You should answer the questions in the same language with user input text.
+    You should answer the question according to the history chat messages in <history>
+    """
+
+    system_input.format(history_messages=get_chat_history())
 
     body = json.dumps(
         {
@@ -101,11 +119,12 @@ def main():
             if input_text:
                 show_chat_history()
                 st.chat_message(name='user').write(input_text)
+                input_text_with_history = input_text + f"<history>{get_chat_history()}<history>"
                 message = {"role": "user",
                            "content": [
                                {"type": "image", "source": {"type": "base64",
                                                             "media_type": "image/jpeg", "data": content_image}},
-                               {"type": "text", "text": input_text}
+                               {"type": "text", "text": input_text_with_history}
                            ]}
 
                 messages = [message]
