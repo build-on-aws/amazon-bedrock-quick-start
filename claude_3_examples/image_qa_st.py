@@ -7,7 +7,7 @@ import streamlit as st
 from botocore.exceptions import ClientError
 
 logger = logging.getLogger(__name__)
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.DEBUG)
 
 st.sidebar.title("Building with Bedrock")  # Title of the application
 st.sidebar.subheader("Q&A for the uploaded image")
@@ -71,8 +71,6 @@ def run_multi_modal_prompt(bedrock_runtime, model_id, messages, max_tokens):
     You should answer the question according to the history chat messages in <history>
     """
 
-    system_input.format(history_messages=get_chat_history())
-
     body = json.dumps(
         {
             "anthropic_version": "bedrock-2023-05-31",
@@ -102,7 +100,7 @@ def main():
         )
 
         model_id = 'anthropic.claude-3-sonnet-20240229-v1:0'
-        max_tokens = 1000
+        max_tokens = 4096
         st.sidebar.header("What image would you like to analyst?")
         uploaded_file = st.sidebar.file_uploader("Upload an image",
                                                  type=['jpg', 'jpeg', 'png', 'gif', 'webp'],
@@ -134,7 +132,7 @@ def main():
 
                 st.chat_message(name='assistant').write(response.get("content")[0].get("text"))
                 add_chat_history_message(input_text, response.get("content")[0].get("text"))
-                logger.info(json.dumps(response, indent=4))
+                logger.debug(json.dumps(response, indent=4))
 
     except ClientError as err:
         message = err.response["Error"]["Message"]
