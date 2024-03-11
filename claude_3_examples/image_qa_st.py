@@ -15,36 +15,35 @@ st.sidebar.subheader("Q&A for the uploaded image")
 REGION = "us-west-2"
 
 
-def add_chat_history_message(input: str, output: str):
-    if 'history' not in st.session_state:
-        st.session_state['history'] = []
-    st.session_state['history'].append({
-        'input': input,
-        'output': output
-    })
+def save_chat_history_message(history: list):
+    st.session_state['history'] = history
+
+
+def is_exist_history():
+    return 'history' in st.session_state
 
 
 def show_chat_history():
     if 'history' not in st.session_state:
         return
     for msg in st.session_state['history']:
-        if 'input' in msg:
-            st.chat_message(name='user').write(msg['input'])
-        if 'output' in msg:
-            st.chat_message(name='ai').write(msg['output'])
+        if 'content' not in msg:
+            continue
+        if type(msg['content']) is list:
+            for item in msg['content']:
+                if item['type'] == "text":
+                    st.chat_message(name=msg['role']).write(item['text'])
+                elif item['type'] == "image":
+                    continue
+                    # st.chat_message(name=msg.role).image(item['source']['data'])
+        else:
+            st.chat_message(name=msg['role']).write(msg['content'])
 
 
 def get_chat_history():
     if 'history' not in st.session_state:
-        return ''
-    res = ''
-    for msg in st.session_state['history']:
-        if 'input' in msg:
-            res += f"user: {msg['input']}\n"
-        if 'output' in msg:
-            res += f"ai: {msg['output']}\n"
-
-    return res
+        return []
+    return st.session_state['history']
 
 
 def clear_chat_history_message():
@@ -68,7 +67,6 @@ def run_multi_modal_prompt(bedrock_runtime, model_id, messages, max_tokens):
     You are Claude, an AI assistant created by Anthropic to be helpful,harmless, and honest. 
     Your goal is to provide informative and substantive responses to queries while avoiding potential harms.
     You should answer the questions in the same language with user input text.
-    You should answer the question according to the history chat messages in <history>
     """
 
     body = json.dumps(
@@ -117,21 +115,30 @@ def main():
             if input_text:
                 show_chat_history()
                 st.chat_message(name='user').write(input_text)
-                input_text_with_history = input_text + f"<history>{get_chat_history()}<history>"
                 message = {"role": "user",
                            "content": [
-                               {"type": "image", "source": {"type": "base64",
-                                                            "media_type": "image/jpeg", "data": content_image}},
-                               {"type": "text", "text": input_text_with_history}
+                               {"type": "text", "text": input_text}
                            ]}
+                if not is_exist_history():
+                    message["content"].append({"type": "image",
+                                               "source": {"type": "base64",
+                                                          "media_type": "image/jpeg",
+                                                          "data": content_image}})
 
-                messages = [message]
-
+                messages = []
+                history_message = get_chat_history()
+                if history_message:
+                    messages.extend(history_message)
+                messages.append(message)
                 with st.spinner('I am thinking about this...'):
                     response = run_multi_modal_prompt(bedrock_runtime, model_id, messages, max_tokens)
 
                 st.chat_message(name='assistant').write(response.get("content")[0].get("text"))
-                add_chat_history_message(input_text, response.get("content")[0].get("text"))
+                messages.append({
+                    "role": "assistant",
+                    "content": response.get("content")[0].get("text")
+                })
+                save_chat_history_message(messages)
                 logger.debug(json.dumps(response, indent=4))
 
     except ClientError as err:
