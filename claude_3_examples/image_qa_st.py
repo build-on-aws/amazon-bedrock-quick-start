@@ -19,7 +19,7 @@ def save_chat_history_message(history: list):
     st.session_state['history'] = history
 
 
-def is_exist_history():
+def has_history():
     return 'history' in st.session_state
 
 
@@ -35,13 +35,13 @@ def show_chat_history():
                     st.chat_message(name=msg['role']).write(item['text'])
                 elif item['type'] == "image":
                     continue
-                    # st.chat_message(name=msg.role).image(item['source']['data'])
+                    # st.chat_message(name=msg['role']).image(item['source']['data'])
         else:
             st.chat_message(name=msg['role']).write(msg['content'])
 
 
 def get_chat_history():
-    if 'history' not in st.session_state:
+    if not has_history():
         return []
     return st.session_state['history']
 
@@ -119,16 +119,17 @@ def main():
                            "content": [
                                {"type": "text", "text": input_text}
                            ]}
-                if not is_exist_history():
+                if not has_history():
                     message["content"].append({"type": "image",
                                                "source": {"type": "base64",
                                                           "media_type": "image/jpeg",
                                                           "data": content_image}})
 
                 messages = []
-                history_message = get_chat_history()
-                if history_message:
-                    messages.extend(history_message)
+
+                # Get History Messages
+                if has_history():
+                    messages.extend(get_chat_history())
                 messages.append(message)
                 with st.spinner('I am thinking about this...'):
                     response = run_multi_modal_prompt(bedrock_runtime, model_id, messages, max_tokens)
