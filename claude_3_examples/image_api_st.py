@@ -1,10 +1,10 @@
-import streamlit as st
-import boto3
-import json
 import base64
 import io
-from PIL import Image
+import json
 
+import boto3
+import streamlit as st
+from PIL import Image
 
 st.title("Building with Bedrock")  # Title of the application
 st.subheader("Image Generation Demo")
@@ -40,8 +40,7 @@ bedrock_runtime = boto3.client(
 )
 
 
-def call_claude_sonet(base64_string):
-
+def call_claude_sonnet(base64_string):
     prompt_config = {
         "anthropic_version": "bedrock-2023-05-31",
         "max_tokens": 4096,
@@ -160,18 +159,16 @@ def generate_image_titan(text):
 
 model = st.selectbox("Select model", ["Stable Diffusion", "Amazon Titan"])
 
-
 if model == "Stable Diffusion":
 
     style = st.selectbox("Select style", sd_presets)
     prompt = st.text_input("Enter prompt")
 
     if st.button("Generate"):
-
         results = generate_image_sd(prompt, style)
 
         # use claude to describe image
-        desc_image = call_claude_sonet(results)
+        desc_image = call_claude_sonnet(results)
 
         img = convert_base64_to_image(results)
         st.image(img, caption=desc_image)
@@ -183,7 +180,7 @@ elif model == "Amazon Titan":
     if st.button("Generate"):
         results = generate_image_titan(prompt)
         # use claude to describe image
-        desc_image = call_claude_sonet(results)
+        desc_image = call_claude_sonnet(results)
 
         img = convert_base64_to_image(results)
         st.image(img, caption=desc_image)

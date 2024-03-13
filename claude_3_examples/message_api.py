@@ -1,6 +1,7 @@
-import boto3
 import json
 import time
+
+import boto3
 
 # Setup bedrock
 bedrock_runtime = boto3.client(
@@ -9,8 +10,7 @@ bedrock_runtime = boto3.client(
 )
 
 
-def call_claude_sonet(prompt):
-
+def call_claude_sonnet(prompt):
     prompt_config = {
         "anthropic_version": "bedrock-2023-05-31",
         "max_tokens": 4096,
@@ -38,12 +38,13 @@ def call_claude_sonet(prompt):
     results = response_body.get("content")[0].get("text")
     return results
 
+
 def summarize_text(text):
     """
     Function to summarize text using a generative AI model.
     """
     prompt = f"Summarize the following text in 50 words or less: {text}"
-    result = call_claude_sonet(prompt)
+    result = call_claude_sonnet(prompt)
     return result
 
 
@@ -52,7 +53,7 @@ def sentiment_analysis(text):
     Function to return a JSON object of sentiment from a given text.
     """
     prompt = f"Giving the following text, return only a valid JSON object of sentiment analysis. text: {text} "
-    result = call_claude_sonet(prompt)
+    result = call_claude_sonnet(prompt)
     return result
 
 
@@ -61,7 +62,7 @@ def perform_qa(question, text):
     Function to perform a Q&A operation based on the provided text.
     """
     prompt = f"Given the following text, answer the question. If the answer is not in the text, 'say you do not know': {question} text: {text} "
-    result = call_claude_sonet(prompt)
+    result = call_claude_sonnet(prompt)
     return result
 
 
