@@ -46,8 +46,10 @@ if prompt := st.chat_input("What is up?"):
         result = model.predict(input=prompt)
 
         # Simulate stream of response with milliseconds delay
-        for chunk in result.split():
-            full_response += chunk + " "
+        for chunk in result.split(' '): # fix for https://github.com/streamlit/streamlit/issues/868
+            full_response += chunk + ' '
+            if chunk.endswith('\n'):
+                full_response += ' '
             time.sleep(0.05)
             # Add a blinking cursor to simulate typing
             message_placeholder.markdown(full_response + "▌")
