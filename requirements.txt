@@ -1,6 +1,7 @@
 boto3
 langchain
 langchain-community 
-streamlit 
-pillow 
+streamlit
+pillow
 faiss-cpu
+botocore

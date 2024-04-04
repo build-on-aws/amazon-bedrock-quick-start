@@ -1,5 +1,6 @@
-import boto3
 import json
+
+import boto3
 
 # Setup bedrock
 bedrock_runtime = boto3.client(
@@ -7,9 +8,11 @@ bedrock_runtime = boto3.client(
     region_name="us-east-1",
 )
 
+
 def claude_prompt_format(prompt: str) -> str:
     # Add headers to start and end of prompt
     return "\n\nHuman: " + prompt + "\n\nAssistant:"
+
 
 # Call AI21 labs model
 def run_mid(prompt):
@@ -84,6 +87,7 @@ def call_cohere(prompt):
     results = response_body.get("generations")[0].get("text")
     return results
 
+
 def summarize_text(text):
     """
     Function to summarize text using a generative AI model.
@@ -91,6 +95,7 @@ def summarize_text(text):
     prompt = f"Summarize the following text: {text}"
     result = run_mid(prompt)  # Assuming run_mid is the function that executes the model
     return result
+
 
 def generate_code():
     """
@@ -101,6 +106,7 @@ def generate_code():
         prompt
     )  # Assuming call_claude is the function that executes the model
     return result
+
 
 def perform_qa(text):
     """
