@@ -17,7 +17,7 @@ bedrock_runtime = boto3.client(
 @st.cache_resource
 def load_llm():
     llm = Bedrock(client=bedrock_runtime, model_id="anthropic.claude-v2")
-    llm.model_kwargs = {"temperature": 0.7, "max_tokens_to_sample": 2048}
+    llm.model_kwargs = {"temperature": 0.7, "max_tokens_to_sample": 300}
 
     model = ConversationChain(llm=llm, verbose=True, memory=ConversationBufferMemory())
 
@@ -34,11 +34,11 @@ for message in st.session_state.messages:
         st.markdown(message["content"])
 
 if prompt := st.chat_input("What is up?"):
-    st.session_state.messages.append({"role": "user", "content": prompt})
-    with st.chat_message("user"):
+    st.session_state.messages.append({"role": "Human", "content": prompt})
+    with st.chat_message("Human"):
         st.markdown(prompt)
 
-    with st.chat_message("assistant"):
+    with st.chat_message("Assistant"):
         message_placeholder = st.empty()
         full_response = ""
 
@@ -52,8 +52,8 @@ if prompt := st.chat_input("What is up?"):
                 full_response += ' '
             time.sleep(0.05)
             # Add a blinking cursor to simulate typing
-            message_placeholder.markdown(full_response + "▌")
+            message_placeholder.markdown(full_response + "|")
 
         message_placeholder.markdown(full_response)
 
-    st.session_state.messages.append({"role": "assistant", "content": full_response})
+    st.session_state.messages.append({"role": "Assistant", "content": full_response})
